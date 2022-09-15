@@ -1,100 +1,171 @@
-import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.io.RandomAccessFile;
+import java.io.PrintWriter;
+import java.util.Arrays;
+import java.util.Scanner;
 
 public class StudentGradingArrayB {
-    public static void main(String[] args) {
-        try {
+    static Scanner scan = new Scanner(System.in);
 
-            // Get the name of the contact to be updated
-            // from the Command line argument
-            String newName = args[0];
 
-            // Get the number to be updated
-            // from the Command line argument
-            long newNumber = Long.parseLong(args[1]);
+    private static void updateGrade(Double[][] studentGrade) {
+        System.out.println("Please enter Student Number: ");
+        int studNumber = scan.nextInt();
 
-            String nameNumberString;
-            String name;
-            long number;
-            int index;
-
-            // Using file pointer creating the file.
-            File file = new File("friendsContact.txt");
-
-            if (!file.exists()) {
-
-                // Create a new file if not exists.
-                file.createNewFile();
-            }
-
-            // Opening file in reading and write mode.
-
-            RandomAccessFile raf = new RandomAccessFile(file, "rw");
-            boolean found = false;
-
-            // Checking whether the name
-            // of contact already exists.
-            // getFilePointer() give the current offset
-            // value from start of the file.
-            while (raf.getFilePointer() < raf.length()) {
-
-                // reading line from the file.
-                nameNumberString = raf.readLine();
-
-                // splitting the string to get name and
-                // number
-                String[] lineSplit
-                        = nameNumberString.split("!");
-
-                // separating name and number.
-                name = lineSplit[0];
-                number = Long.parseLong(lineSplit[1]);
-
-                // if condition to find existence of record.
-                if (name == newName
-                        || number == newNumber) {
-                    found = true;
-                    break;
-                }
-            }
-
-            if (!found) {
-
-                // Enter the if block when a record
-                // is not already present in the file.
-                nameNumberString
-                        = newName + "!"
-                        + String.valueOf(newNumber);
-
-                // writeBytes function to write a string
-                // as a sequence of bytes.
-                raf.writeBytes(nameNumberString);
-
-                // To insert the next record in new line.
-                raf.writeBytes(System.lineSeparator());
-
-                // Print the message
-                System.out.println(" Friend added. ");
-
-                // Closing the resources.
-                raf.close();
-            }
-            // The contact to be updated
-            // could not be found
-            else {
-
-                // Closing the resources.
-                raf.close();
-
-                // Print the message
-                System.out.println(" Input name"
-                        + " does not exists. ");
-            }
-        } catch (IOException | NumberFormatException ioe) {
-
-            System.out.println(ioe);
+        for (int j = 0; j < studentGrade[studNumber - 1].length; j++) {
+            System.out.print("Quiz #" + (j + 1) + ": ");
+            studentGrade[studNumber - 1][j] = scan.nextDouble();
         }
+    }
+
+    private static void deleteGrade(Double[][] studentGrade) {
+
+        System.out.println("Please enter Student Number: ");
+        int studNumber = scan.nextInt();
+        Arrays.fill(studentGrade[--studNumber], (double) -1);
+    }
+
+
+    private static void readGrade(int arrStudents, Double[][] grades, int numberOfQuiz) throws IOException {
+
+        displayHeader(numberOfQuiz);
+
+        //View
+        double average = 0;
+        for (int i = 0; i < arrStudents; i++) {
+            if (!(grades[i][0] < 0.0)) {
+                System.out.println();
+                System.out.printf(" %-20s ", "Student#" + (i + 1));
+                for (int j = 0; j < numberOfQuiz; j++) {
+                    average += Double.parseDouble(String.valueOf(grades[i][j]));
+                    System.out.printf(" %-20s ", grades[i][j].toString());
+                }
+                average /= 2;
+                System.out.printf(" %-20s  %-20s ", average, checkRemarks(average));
+                average = 0;
+            }
+        }
+
+        //Save data to notepad txt file
+        saveDataToFile(arrStudents, grades, numberOfQuiz);
+
+    }
+
+    private static Object checkRemarks(double average) {
+        return average <= 100 && average >= 75 ? "Passed" : "Failed";
+    }
+
+    private static void saveDataToFile(int arrStudents, Double[][] grades, int numberOfQuiz) throws IOException {
+
+        FileWriter writer = new FileWriter("Student.txt", true);
+        PrintWriter pw = new PrintWriter(writer);
+
+        pw.printf(" %-20s ", "");
+
+        //Display Table
+        for (int index = 1; index <= numberOfQuiz; index++) {
+            String rows = "Quiz #" + (index);
+            pw.printf(" %-20s ", rows);
+        }
+        pw.printf(" %-20s ", "Average");
+        pw.printf(" %-20s ", "Remarks");
+
+        //Display Student along with Quiz grades
+        double average = 0;
+        for (int i = 0; i < arrStudents; i++) {
+
+            if (grades[i][0] != 0.0) {
+                pw.println();
+                pw.printf(" %-20s ", "Student#" + (i + 1));
+                for (int j = 0; j < numberOfQuiz; j++) {
+                    average += Double.parseDouble(String.valueOf(grades[i][j]));
+                    pw.printf(" %-20s ", grades[i][j].toString());
+                }
+                average /= 2;
+                pw.printf(" %-20s  %-20s ", average, checkRemarks(average));
+                average = 0;
+            }
+        }
+
+        pw.close();
+    }
+
+    private static void displayHeader(int numberOfQuiz) {
+
+        //Setup table columns
+        System.out.printf(" %-20s ", "");
+        for (int index = 1; index <= numberOfQuiz; index++) {
+            String rows = "Quiz #" + (index);
+            System.out.printf(" %-20s ", rows);
+        }
+        System.out.printf(" %-20s  %-20s ", "Average", "Remarks");
+    }
+
+    public static void main(String[] args) throws IOException {
+
+        System.out.print("Please input the number of Students: ");
+        int[] student = new int[scan.nextInt()];
+
+        System.out.print("Please input the number of Quizzes: ");
+        int quizNumber = scan.nextInt();
+
+        Double[][] studentGrade = new Double[student.length][];
+
+        System.out.println("Grades of Quizzes: ");
+
+        for (int i = 0; i < student.length; i++) {
+            Double[] grades = new Double[quizNumber];
+            System.out.println("Student#" + (i + 1) + ": ");
+
+            for (int j = 0; j < grades.length; j++) {
+                System.out.print("Quiz #" + (j + 1) + ": ");
+                grades[j] = scan.nextDouble();
+            }
+            studentGrade[i] = grades;
+        }
+
+        do {
+            System.out.println("\nMain Menu\n"
+                    + "1. View Grades\n"
+                    + "2. Update Grades\n"
+                    + "3. Delete Grades\n"
+                    + "4. Exit "
+            );
+            System.out.print("Please select an option: ");
+            int option = scan.nextInt();
+
+            switch (option) {
+                case 1:
+                    System.out.println("===================================================================================================================");
+                    readGrade(student.length, studentGrade, quizNumber);
+                    System.out.println("\n===================================================================================================================");
+                    break;
+                case 2:
+                    updateGrade(studentGrade);
+                    FileWriter fw1 = new FileWriter("Student.txt", false);
+                    PrintWriter pw1 = new PrintWriter(fw1, false);
+                    pw1.flush();
+                    pw1.close();
+                    break;
+                case 3:
+                    deleteGrade(studentGrade);
+                    FileWriter fw2 = new FileWriter("Student.txt", false);
+                    PrintWriter pw2 = new PrintWriter(fw2, false);
+                    pw2.flush();
+                    pw2.close();
+                    break;
+                case 4:
+                    FileWriter fw3 = new FileWriter("Student.txt", false);
+                    PrintWriter pw3 = new PrintWriter(fw3, false);
+                    pw3.flush();
+                    pw3.close();
+                    System.exit(1);
+                    break;
+                default:
+                    System.out.println("INVALID OPTION");
+                    break;
+            }
+        } while (true);
 
     }
 }
