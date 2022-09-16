@@ -77,7 +77,7 @@ public class ArrayB {
 
         System.out.println("Please enter Student Number: ");
         int studNumber = scan.nextInt();
-        Arrays.fill(studentGrade[--studNumber], (double) -1);
+        Arrays.fill(studentGrade[--studNumber], (double) 0);
 
     }
 
@@ -95,7 +95,7 @@ public class ArrayB {
         //View
         double average = 0;
         for (int i = 0; i < arrStudents; i++) {
-            if (!(grades[i][0] < 0.0)) {
+            if (grades[i][0] != 0.0) {
                 System.out.println();
                 System.out.printf(" %-20s ", "Student#" + (i + 1));
                 for (int j = 0; j < numberOfQuiz; j++) {

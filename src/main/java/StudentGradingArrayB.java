@@ -1,12 +1,13 @@
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 
 public class StudentGradingArrayB {
     static Scanner scan = new Scanner(System.in);
-
 
     private static void updateGrade(Double[][] studentGrade) {
         System.out.println("Please enter Student Number: ");
@@ -22,7 +23,8 @@ public class StudentGradingArrayB {
 
         System.out.println("Please enter Student Number: ");
         int studNumber = scan.nextInt();
-        Arrays.fill(studentGrade[--studNumber], (double) -1);
+        Arrays.fill(studentGrade[--studNumber], (double) 0);
+
     }
 
 
