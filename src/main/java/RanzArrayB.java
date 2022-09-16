@@ -4,13 +4,13 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Scanner;
 
-public class ArrayB {
+public class RanzArrayB {
 
     static Scanner scan = new Scanner(System.in);
 
     public static void main(String[] args) throws IOException {
 
-        int flag = 0;
+        int counter = 0;
 
         System.out.print("Please input the number of Students: ");
         int numberOfStud = scan.nextInt();
@@ -55,12 +55,12 @@ public class ArrayB {
                     break;
                 case 4:
                     flushFile();
-                    flag++;
+                    counter++;
                     break;
                 default:
                     System.out.println("INVALID OPTION");
             }
-        } while (flag == 0);
+        } while (counter == 0);
     }
 
     private static void updateData(Double[][] studentGrade) {
@@ -77,7 +77,7 @@ public class ArrayB {
 
         System.out.println("Please enter Student Number: ");
         int studNumber = scan.nextInt();
-        Arrays.fill(studentGrade[--studNumber], (double) 0);
+        Arrays.fill(studentGrade[--studNumber], (double) -1);
 
     }
 
@@ -95,7 +95,7 @@ public class ArrayB {
         //View
         double average = 0;
         for (int i = 0; i < arrStudents; i++) {
-            if (grades[i][0] != 0.0) {
+            if (!(grades[i][0] < 0.0)) {
                 System.out.println();
                 System.out.printf(" %-20s ", "Student#" + (i + 1));
                 for (int j = 0; j < numberOfQuiz; j++) {
@@ -105,10 +105,10 @@ public class ArrayB {
                 average /= 2;
                 System.out.printf(" %-20s  %-20s ", average, average <= 100 && average >= 75 ? "Passed" : "Failed");
                 average = 0;
+
             }
 
         }
-
         //Save data to notepad txt file
         saveToFile(arrStudents, grades, numberOfQuiz);
 
@@ -132,7 +132,7 @@ public class ArrayB {
         //Display Student along with Quiz grades
         double average = 0;
         for (int i = 0; i < arrStudents; i++) {
-            if (grades[i][0] != 0.0) {
+            if (!(grades[i][0] < 0.0)) {
                 out.println();
                 out.printf(" %-20s ", "Student#" + (i + 1));
                 for (int j = 0; j < numberOfQuiz; j++) {
@@ -157,6 +157,7 @@ public class ArrayB {
             System.out.printf(" %-20s ", rows);
         }
         System.out.printf(" %-20s  %-20s ", "Average", "Remarks");
+
     }
 }
 

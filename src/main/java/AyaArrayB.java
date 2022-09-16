@@ -1,21 +1,26 @@
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
-public class StudentGradingArrayB {
+public class AyaArrayB {
     static Scanner scan = new Scanner(System.in);
 
     private static void updateGrade(Double[][] studentGrade) {
         System.out.println("Please enter Student Number: ");
         int studNumber = scan.nextInt();
 
-        for (int j = 0; j < studentGrade[studNumber - 1].length; j++) {
-            System.out.print("Quiz #" + (j + 1) + ": ");
-            studentGrade[studNumber - 1][j] = scan.nextDouble();
+        List<Integer> list = Arrays.asList(studNumber);
+
+        if (studNumber > list.size() || studNumber == 0) {
+            System.out.println("Record not Found");
+        } else {
+            for (int j = 0; j < studentGrade[studNumber - 1].length; j++) {
+                System.out.print("Quiz #" + (j + 1) + ": ");
+                studentGrade[studNumber - 1][j] = scan.nextDouble();
+            }
         }
     }
 
@@ -23,10 +28,15 @@ public class StudentGradingArrayB {
 
         System.out.println("Please enter Student Number: ");
         int studNumber = scan.nextInt();
-        Arrays.fill(studentGrade[--studNumber], (double) 0);
+        List<Integer> list = Arrays.asList(studNumber);
+
+        if (studNumber > list.size() || studNumber== 0) {
+            System.out.println("Record not Found");
+        } else {
+            Arrays.fill(studentGrade[--studNumber], (double) -1);
+        }
 
     }
-
 
     private static void readGrade(int arrStudents, Double[][] grades, int numberOfQuiz) throws IOException {
 
@@ -76,7 +86,7 @@ public class StudentGradingArrayB {
         double average = 0;
         for (int i = 0; i < arrStudents; i++) {
 
-            if (grades[i][0] != 0.0) {
+            if (!(grades[i][0] < 0.0)) {
                 pw.println();
                 pw.printf(" %-20s ", "Student#" + (i + 1));
                 for (int j = 0; j < numberOfQuiz; j++) {
